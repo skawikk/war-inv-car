@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+
 from .choices import (
     ACCOUNT_TYPE_CHOICES,
     PAYMENTS_TYPE_CHOICES,
@@ -78,7 +79,6 @@ class Payments(models.Model):
     date = models.DateField(auto_now_add=True)
     added_by = models.ForeignKey(User)
 
-
     def __str__(self):
         return "{} {} {}".format(self.get_type_display(), self.date, self.value)
 
@@ -112,6 +112,7 @@ class ProductsInvoices(models.Model):
     def __str__(self):
         return "{}".format(self.name)
 
+
 class DailyReport(models.Model):
     number = models.IntegerField(max_length=10)
     value = models.DecimalField(max_digits=10, decimal_places=2)
@@ -122,5 +123,6 @@ class DailyReport(models.Model):
         null=True,
         blank=True
     )
+
     def __str__(self):
         return "Rap. nr: {}, {}zł".format(self.number, self.value)

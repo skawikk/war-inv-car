@@ -16,6 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from wesol import views
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^invoice-add/$', views.InvoicesAddNewView.as_view(), name="invoice-add"),
+    url(r'^payment-add/$', views.PaymentAddNewView.as_view(), name="payment-add"),
+
 ]

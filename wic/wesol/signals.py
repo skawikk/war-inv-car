@@ -4,6 +4,7 @@ from django.dispatch import receiver
 
 from wesol.models import Payments, Invoices
 
+
 # receviers to check gross of invoices, and if payment covers the amount of invoice
 # set if_payment field to True (it will hope to create payments and list for invoices without a payment
 
