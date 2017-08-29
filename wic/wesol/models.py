@@ -41,7 +41,7 @@ class Invoices(models.Model):
     added_by = models.ForeignKey(User)
 
     def __str__(self):
-        return "{} opłacona? {}".format(self.number, self.if_payment)
+        return "{}:{}:{}".format(self.contractor, self.number, self.if_payment)
 
 
 class Payments(models.Model):
