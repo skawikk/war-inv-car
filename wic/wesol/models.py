@@ -20,10 +20,26 @@ class Contractors(models.Model):
     short_name = models.CharField(max_length=10, unique=True)
     full_name = models.CharField(max_length=128)
     nip = models.IntegerField(null=True, blank=True)
-    street = models.CharField(max_length=128, null=True, blank=True)
-    city = models.CharField(max_length=64, null=True, blank=True)
-    postal_code = models.CharField(max_length=6, null=True, blank=True)
-    bank_account = models.CharField(max_length=28, null=True, blank=True)
+    street = models.CharField(
+        max_length=128,
+        null=True,
+        blank=True
+    )
+    city = models.CharField(
+        max_length=64,
+        null=True,
+        blank=True
+    )
+    postal_code = models.CharField(
+        max_length=6,
+        null=True,
+        blank=True
+    )
+    bank_account = models.CharField(
+        max_length=28,
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.short_name
@@ -46,13 +62,22 @@ class Invoices(models.Model):
 
 class Payments(models.Model):
     type = models.IntegerField(choices=PAYMENTS_TYPE_CHOICES)
-    invoice = models.ForeignKey(Invoices, null=True, blank=True)
-    contractor = models.ForeignKey(Contractors, null=True, blank=True)
+    invoice = models.ForeignKey(
+        Invoices,
+        null=True,
+        blank=True
+    )
+    contractor = models.ForeignKey(
+        Contractors,
+        null=True,
+        blank=True
+    )
     account = models.ForeignKey(Accounts)
     description = models.TextField(null=True, blank=True)
     value = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)
     added_by = models.ForeignKey(User)
+
 
     def __str__(self):
         return "{} {} {}".format(self.get_type_display(), self.date, self.value)
@@ -61,7 +86,11 @@ class Payments(models.Model):
 class Products(models.Model):
     name = models.CharField(max_length=64, unique=True)
     tax = models.IntegerField(choices=PRODUCTS_TAX_CHOICES)
-    used_in = models.IntegerField(choices=PRODUCTS_USED_IN_CHOICES, null=True, blank=True)
+    used_in = models.IntegerField(
+        choices=PRODUCTS_USED_IN_CHOICES,
+        null=True,
+        blank=True
+    )
     invoice = models.ManyToManyField(
         Invoices,
         through="ProductsInvoices",
@@ -82,3 +111,16 @@ class ProductsInvoices(models.Model):
 
     def __str__(self):
         return "{}".format(self.name)
+
+class DailyReport(models.Model):
+    number = models.IntegerField(max_length=10)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    cash = models.ForeignKey(Payments)
+    credit_card_take = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    def __str__(self):
+        return "Rap. nr: {}, {}zł".format(self.number, self.value)
