@@ -93,6 +93,7 @@ DATABASES = {
         'PASSWORD': 'coderslab',
         'OPTIONS': {
             'autocommit': True,
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }

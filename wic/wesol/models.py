@@ -114,7 +114,7 @@ class ProductsInvoices(models.Model):
 
 
 class DailyReport(models.Model):
-    number = models.IntegerField(max_length=10)
+    number = models.IntegerField()
     value = models.DecimalField(max_digits=10, decimal_places=2)
     cash = models.ForeignKey(Payments)
     credit_card_take = models.DecimalField(
