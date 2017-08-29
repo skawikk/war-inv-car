@@ -23,4 +23,6 @@ PRODUCTS_TAX_CHOICES = [
 PRODUCTS_USED_IN_CHOICES = [
     (1, "Do sprzedaży"),
     (2, "Na imprezy"),
+    (3, "Użytek własny"),
+    (4, "ogólne")
 ]
