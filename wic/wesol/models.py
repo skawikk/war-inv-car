@@ -91,11 +91,7 @@ class Products(models.Model):
         null=True,
         blank=True
     )
-    invoice = models.ManyToManyField(
-        Invoices,
-        through="ProductsInvoices",
-        related_name="products"
-    )
+    actual_quantity = models.IntegerField(default=0 ,null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -106,15 +102,17 @@ class ProductsInvoices(models.Model):
     quantity = models.IntegerField()
     invoice = models.ForeignKey(Invoices)
     date_added = models.DateField(auto_now_add=True)
-    date_expiration = models.DateField()
+    date_expiration = models.DateField(null=True, blank=True)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity_remaining = models.IntegerField()
+    added_by = models.ForeignKey(User)
 
     def __str__(self):
         return "{}".format(self.name)
 
 
 class DailyReport(models.Model):
-    number = models.IntegerField()
+    number = models.CharField(max_length=10)
     value = models.DecimalField(max_digits=10, decimal_places=2)
     cash = models.ForeignKey(Payments)
     credit_card_take = models.DecimalField(
@@ -123,6 +121,8 @@ class DailyReport(models.Model):
         null=True,
         blank=True
     )
+    counted_money_in_drawer = models.DecimalField(max_digits=10, decimal_places=2)
+    added_by = models.ForeignKey(User)
 
     def __str__(self):
         return "Rap. nr: {}, {}zł".format(self.number, self.value)
