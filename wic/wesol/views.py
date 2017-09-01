@@ -3,26 +3,19 @@ from datetime import datetime
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum, Avg
+from django.forms import SelectDateWidget
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView, FormView
 
-from wesol.forms import PaymentsAddNewForm, StocktakingForm, ProductsInvoicesAddForm, LoginForm
+from wesol.forms import PaymentsAddNewForm, StocktakingForm, ProductsInvoicesAddForm, LoginForm, InvoicesAddNewForm, \
+    ContractorsNewAddForm
 from wesol.mixins import GetInitialAuthorMixin
-from wesol.models import Invoices, DailyReport, Payments, Products, ProductsInvoices
+from wesol.models import Invoices, DailyReport, Payments, Products, ProductsInvoices, Contractors
 
 
 class InvoicesAddNewView(LoginRequiredMixin, CreateView):
-    model = Invoices
-    fields = [
-        "number",
-        "contractor",
-        "gross",
-        "date_sale",
-        "date_to_pay",
-        "if_payment",
-        "description",
-    ]
+    form_class = InvoicesAddNewForm
     template_name = "wesol/generic_form.html"
 
     def form_valid(self, form):
@@ -204,3 +197,18 @@ class LogoutView(View):
 class HomeSiteView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "base.html")
+
+
+class ContractorsNewAddView(LoginRequiredMixin, CreateView):
+    form_class = ContractorsNewAddForm
+    template_name = "wesol/generic_form.html"
+    success_url = "/"
+
+    def form_valid(self, form):
+        # set added_by to current logged user:
+        contractor = form.save(commit=False)
+        contractor.added_by = self.request.user
+        contractor.save()
+        return redirect(self.success_url)
+
+

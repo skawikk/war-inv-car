@@ -1,23 +1,25 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
+from django.forms import SelectDateWidget
+from localflavor.generic.countries.sepa import IBAN_SEPA_COUNTRIES
+from localflavor.generic.forms import IBANFormField
+from localflavor.pl.forms import PLNIPField, PLPostalCodeField
 
-from wesol.models import Invoices, Payments, ProductsInvoices, Products
+from wesol.models import Invoices, Payments, ProductsInvoices, Products, Contractors
 
 
 class PaymentsAddNewForm(forms.ModelForm):
     class Meta:
         model = Payments
         fields = "__all__"
-        widgets = {'added_by': forms.HiddenInput()}
+        widgets = {
+            'added_by': forms.HiddenInput(),
+        }
 
     def __init__(self, *args, **kwargs):
-        # TODO: add exlude field from form if user has no perm!!
-        # user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields["invoice"].queryset = Invoices.objects.filter(if_payment=False)
-        # if not user.is_staff:
-        #     del self.fields['contractor']
 
 
 class ProductsInvoicesAddForm(forms.ModelForm):
@@ -31,9 +33,15 @@ class ProductsInvoicesAddForm(forms.ModelForm):
             "price_net",
         ]
 
+        widgets = {
+            'date_expiration': SelectDateWidget(),
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["invoice"].queryset = Invoices.objects.exclude(description__contains="Inwentaryzacja")
+        excluded = Invoices.objects.exclude(description__contains="Inwentaryzacja") & \
+                   Invoices.objects.exclude(contractor__short_name__contains="Kas")
+        self.fields["invoice"].queryset = excluded
 
 
 class StocktakingForm(forms.Form):
@@ -59,3 +67,36 @@ class LoginForm(forms.Form):
         if self.user is None:
             raise ValidationError("Błędne dane logowania!")
         return cleaned_data
+
+
+class InvoicesAddNewForm(forms.ModelForm):
+    class Meta:
+        model = Invoices
+        fields = [
+            "number",
+            "contractor",
+            "gross",
+            "date_sale",
+            "date_to_pay",
+            "if_payment",
+            "description",
+        ]
+        widgets = {
+            'date_sale': SelectDateWidget(),
+            'date_to_pay': SelectDateWidget(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        excluded = Contractors.objects.exclude(full_name__contains="Wewnętrzne:")
+        self.fields["contractor"].queryset = excluded
+
+
+class ContractorsNewAddForm(forms.ModelForm):
+    nip = PLNIPField(label="NIP")
+    postal_code = PLPostalCodeField(label="Kod pocztowy")
+    bank_account = IBANFormField(include_countries=IBAN_SEPA_COUNTRIES, label="Nr konta bakowego")
+
+    class Meta:
+        model = Contractors
+        exclude = ["added_by"]

@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^login/$', views.LoginView.as_view(), name="login"),
     url(r'^logout/$', views.LogoutView.as_view(), name="logout"),
     url(r'^invoice-add/$', views.InvoicesAddNewView.as_view(), name="invoice-add"),
+    url(r'^contractor-add/$', views.ContractorsNewAddView.as_view(), name="contractor-add"),
     url(r'^payment-add/$', views.PaymentAddNewView.as_view(), name="payment-add"),
     url(r'^dailyreport/$', views.DailyReportAddNewView.as_view(), name="dailyreport"),
     url(r'^product-add/$', views.ProductNewAddView.as_view(), name="product-add"),
