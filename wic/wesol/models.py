@@ -85,6 +85,11 @@ class Invoices(models.Model):
     date_added = models.DateField(auto_now_add=True)
     added_by = models.ForeignKey(User)
 
+    if contractor:
+        contractor = contractor
+    else:
+        contractor = "brak"
+
     def __str__(self):
         return "{} nr: {}".format(
             self.contractor,
